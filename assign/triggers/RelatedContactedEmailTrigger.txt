@@ -1,0 +1,68 @@
+trigger RelatedContactedEmail on Contact (after insert,after delete,after update)
+{
+   
+    Set<Id> accountIds= new Set<Id>();
+
+if(trigger.isInsert)
+{   
+    List<Contact> conList= [select id,email,accountId from Contact where id in :Trigger.new ];
+    for(Contact con:conList)
+    {
+        accountIds.add(con.accountId);  
+    }
+}
+   
+if(trigger.isUpdate)
+   {
+    for(Contact newcon:Trigger.new)
+    {
+        Contact oldcon=trigger.oldMap.get(newcon.Id);
+        if(oldcon.accountId!=newcon.accountId)
+        {
+            accountIds.add(oldcon.AccountId);
+            accountIds.add(newcon.AccountId);
+            
+        }
+    }
+   
+   }
+   
+    
+if(Trigger.isDelete)
+{
+        for(Contact con:Trigger.old)
+        {
+            
+            accountIds.add(con.accountId);
+        }      
+        
+}
+   
+    
+List<Account> acclist = [select name,Email__c,(select email from contacts) from Account where Id in :accountIds];
+ List<Account> accountList = new List<Account>();
+    for(Account acc : acclist){
+            Contact[] conlist = acc.contacts;
+        if(!conlist.isEmpty()){
+            Integer i;
+            String str;
+            for(i=0; i<conlist.size();i++){
+                if(conlist[i].email!=null){
+                    str = conlist[i].email;
+                    i++;
+                    break;
+                }
+            }
+            for(; i<conlist.size(); i++){
+                if(conlist[i].email!=null){
+                    str += ','+conlist[i].email;
+                }
+            }
+                acc.email__c = str;
+                accountList.add(acc);
+            }
+        }
+       
+    update accountList;   
+   
+}

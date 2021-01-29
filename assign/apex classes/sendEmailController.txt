@@ -1,0 +1,47 @@
+public class sendEmail {
+	public String subject { get; set; }
+	public String body { get; set; }
+
+	private final Account account;
+
+	// Create a constructor that populates the Account object
+	public sendEmail() {
+		account = [select Name,Email__c (SELECT Contact.Name, Contact.Email FROM Account.Contacts) 
+				from Account where id = :ApexPages.currentPage().getParameters().get('id')];
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public PageReference send() {
+		Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage(); 
+
+    String addresses=account.Email__c;
+    
+
+		String[] toAddresses = addresses.split(',', 0);
+
+
+		email.setSubject( subject );
+		email.setToAddresses( toAddresses );
+		email.setPlainTextBody( body );
+    
+		
+		Messaging.SendEmailResult [] r = 
+			Messaging.sendEmail(new Messaging.SingleEmailMessage[] {email});   
+        for (Messaging.SendEmailResult sendEmailResult : r) {
+
+if(sendEmailResult.isSuccess()){ System.debug('success');}
+
+else{ 
+    System.debug('error');}
+
+}
+
+
+		
+return null;		
+	}
+
+}

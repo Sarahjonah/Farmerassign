@@ -1,0 +1,31 @@
+public  with sharing class additional {
+
+      @future
+    public static void createUsers(Set<Id> contacts) {
+   List<User> userList = new List<User>();
+        List<Contact> cons=[select id,name,Username__c,Lastname__c,email from contact where id in :contacts];
+               Profile profile1 = [SELECT Id FROM Profile WHERE Name LIKE '%Portal User%' Limit 1];
+
+    UserRole portalRole = [Select Id From UserRole Where PortalType = 'None' Limit 1];
+        for(Contact contactObj:cons)
+        {
+        User uObj=new User();
+    
+    uObj.Username = contactObj.Username__c;
+    uObj.LastName = contactObj.Lastname__c;
+        uObj.Email = contactObj.Email;
+        uObj.Alias = 'Stupid';
+        uObj.ProfileId = profile1.Id;
+        uObj.UserRoleId = portalRole.Id;
+        uObj.IsActive = true; 
+        uObj.TimeZoneSidKey = 'GMT';
+        uObj.LanguageLocaleKey = 'en_US';
+        uObj.EmailEncodingKey = 'UTF-8';
+        uObj.LocaleSidKey = 'en_US';
+        uObj.ContactId = contactObj.Id;
+
+    userList.add(uObj);
+  }
+     insert userList;   
+}
+}

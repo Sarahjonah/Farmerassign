@@ -1,0 +1,47 @@
+trigger UserTrg on Contact (after insert,after delete) 
+{Set <Id> accountIds = new Set <Id>();
+ Set <Id> conIds = new Set <Id>();
+List <Account> lstAccountsToUpdate = new List <Account>();
+Contact[] contacts=Trigger.new;
+ List<Id> contactIds2 = new List<Id>();
+ 
+if(Trigger.isAfter && Trigger.isInsert)
+{
+List<User> userList = new List<User>();
+      
+for(Contact contactObj:Trigger.new)
+{  System.debug('hi');
+    conIds.add(contactObj.Id);
+    accountIds.add(contactObj.accountID);
+       
+}   
+additional.createUsers(conIds);
+    
+}
+ 
+ if(Trigger.isAfter && Trigger.isDelete)
+ {
+ for(Contact con:Trigger.old)
+   {  
+    accountIds.add(con.accountID);
+       List<User> users=con.users;
+    for(User u:users){
+        u.IsActive=False;
+    }
+  }   
+ 
+ 
+
+List<Account> accList=[SELECT Id,Name,Count__c,(Select Id from Contacts) from Account where Id IN: accountIds];
+      for(Account acc:accList)
+     {
+    Account accObj = new Account ();
+    accObj.Id = acc.Id;
+    accObj.Count__c = acc.Contacts.size();
+    lstAccountsToUpdate.add(accObj);
+     }
+
+UPDATE lstAccountsToUpdate;
+
+}
+}

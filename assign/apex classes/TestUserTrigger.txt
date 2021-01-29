@@ -1,0 +1,47 @@
+@isTest
+public class testclass1 {
+ /*static testMethod void test_mixed_dmlbug() { 
+    Account a =new Account(Name='Test Account');
+     insert a;
+    Contact c = new Contact(FirstName='Test',Lastname='Contact',Username__c='test@gmail.com',Lastname__c='Contact',Email='test@gmail.com',AccountId=a.Id);
+    insert c;
+    
+    Profile p = [SELECT Id FROM Profile WHERE Name LIKE '%Portal User%' Limit 1];
+
+    UserRole r = [Select Id From UserRole Where PortalType = 'None' Limit 1];
+    User u = new User(alias = 'standt', email=c.Email, 
+            emailencodingkey='UTF-8', lastname=c.Lastname__c, 
+            languagelocalekey='en_US', 
+            localesidkey='en_US', profileid = p.Id, userroleid = r.Id,
+            timezonesidkey='America/Los_Angeles', 
+            username=c.Username__c,contactId=c.Id);
+    
+    insert u;
+     
+    
+        
+
+    
+   
+
+}*/
+    @isTest(SeeAllData=true)
+    static void func1(){
+        Account acc1 = [select Count__c from Account where name='Accenture' limit 1];
+        User[] userlist1 = [select Name from User];
+        Contact con = new Contact(firstname='first1', lastname='last1',Username__c='test@gmail.com',Lastname__c='Contact', AccountId=acc1.Id);
+        insert con;
+        System.debug(userlist1.size()+' '+acc1.Count__c);
+        Test.startTest();
+        Account acc2 = [select Count__c from Account where name='Accenture' limit 1];
+        User[] userlist2 = [select Name from User];
+        System.debug(acc1.Count__c+' '+acc2.Count__c);
+        System.debug(userlist1.size()+' '+userlist1.size());
+        System.assertEquals(acc1.Count__c+1, acc2.Count__c);
+        //System.assertEquals(userlist1.size()+1, userlist2.size());
+        Delete con;
+        Account acc3 = [select Count__c from Account where name='Accenture' limit 1];
+        System.assertEquals(acc1.Count__c, acc3.Count__c);
+        Test.stopTest();
+    }
+}
