@@ -8,9 +8,22 @@ import { refreshApex } from '@salesforce/apex';
 
 
 export default class AccountList extends NavigationMixin(LightningElement) {
+    
     @wire(getAccountList) accounts;
      @api getAccId;
      @api error
+     activeSections = ['A'];
+    activeSectionsMessage = '';
+
+    handleSectionToggle(event) {
+        const openSections = event.detail.openSections;
+
+        if (openSections.length === 0) {
+            this.activeSectionsMessage = 'All sections are closed';
+        } else {
+            this.activeSectionsMessage =
+                'Open sections: ' + openSections.join(', ');
+        }}
    
     handleChangeRadio(event){        
         this.getAccId = event.target.value;
@@ -38,7 +51,3 @@ navigateToAccountPage() {
         });
     }
     }
-    
-    
-
-

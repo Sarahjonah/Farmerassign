@@ -1,8 +1,9 @@
 public with sharing class SendMail {
     @AuraEnabled(cacheable=true)
-    public static String Send() {
+    public static String Send(String accid) {
         Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage(); 
-        Account acc = [select Email__c, (select email from contacts) from Account where name='ddos' limit 1];
+        
+        Account acc = [select Id,Email__c, (select email from contacts) from Account where Id=:accid limit 1];
         String addresses = acc.Email__c;
             
  

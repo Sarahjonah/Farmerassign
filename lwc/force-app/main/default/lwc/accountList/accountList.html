@@ -6,8 +6,14 @@
                     <thead style="border: solid 1px">
                         <tr >
                             <th id="name">
+                                
+                            </th>
+                            
+                           
+                            <th id="nam">
                                 <p>Account Name:-</p>
                             </th>
+                            <th></th>
                            
                         </tr>
                     </thead>
@@ -16,23 +22,21 @@
                             <tr style="border: solid 1px" key={acc.Id}>
                                 <td><lightning-input type="radio" name="radioButtonSelect" value={acc.Id} onchange={handleChangeRadio}></lightning-input></td>
                                 <td key = {acc.Id}>
-                                    <input id={acc.Id} style="width: 100%" key={acc.Id} value={acc.Name} disabled />
+                                    <lightning-accordion allow-multiple-sections-open
+                                    onsectiontoggle={handleSectionToggle}
+                                    active-section-name={activeSections}
+                                    key={acc.Id}>
+                   <lightning-accordion-section name="A" key={acc.Id} label={acc.Name}>
+                    
+                            
+                    <c-mycomponent-2 id={acc.Id}></c-mycomponent-2>
+                            
+                              
+       
+                   </lightning-accordion-section></lightning-accordion>
                                 </td>
                                 
-                                <td><lightning-button-menu
-                    alternative-text="Action"
-                                    onselect={handleMenuSelect}>
-                            
-                                <template for:each={acc.Contacts} for:item="con">
-                                    <lightning-menu-item
-                                        id={con.Id}
-                                        label={con.Name}
-                                        value={con.Name}
-                                        key={con.Name}>
-                                    </lightning-menu-item>
-                                </template>
-                            
-                              </lightning-button-menu></td>
+                                
                               
                                
                             </tr>
